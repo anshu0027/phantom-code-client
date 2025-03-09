@@ -11,8 +11,8 @@ function SplitterComponent({ children }: { children: ReactNode }) {
 
     const getGutter = () => {
         const gutter = document.createElement("div")
-        gutter.className = "h-full cursor-e-resizer hidden md:block"
-        gutter.style.backgroundColor = "#e1e1ffb3"
+        gutter.className = "h-full cursor-e-resize hidden md:block transition-colors duration-200"
+        gutter.style.backgroundColor = "#CBA6F7" // Accent 1 (Buttons/Highlights)
         return gutter
     }
 
@@ -42,6 +42,8 @@ function SplitterComponent({ children }: { children: ReactNode }) {
 
     const getGutterStyle = () => ({
         width: "7px",
+        backgroundColor: "#CBA6F7", // Accent 1
+        transition: "background-color 0.2s ease-in-out",
         display: isSidebarOpen && !isMobile ? "block" : "none",
     })
 
@@ -58,7 +60,7 @@ function SplitterComponent({ children }: { children: ReactNode }) {
             snapOffset={30}
             gutterStyle={getGutterStyle}
             onDrag={handleGutterDrag}
-            className="flex h-screen min-h-screen max-w-full items-center justify-center overflow-hidden"
+            className="flex h-screen min-h-screen max-w-full items-center justify-center overflow-hidden bg-[#1E1E2E] text-[#CDD6F4]"
         >
             {children}
         </Split>

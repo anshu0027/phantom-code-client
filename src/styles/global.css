@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 @import url("tldraw/tldraw.css");
 
 @tailwind base;
@@ -10,8 +11,13 @@
     }
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
+/* 🔥 Set Roboto as the Primary Font */
 body {
-    font-family: "Space Grotesk", sans-serif;
+    font-family: "Roboto", sans-serif;
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
@@ -19,8 +25,18 @@ body {
     --sb-track-color: #3d404a;
     --sb-thumb-color: #e1e1ffb3;
     --sb-size: 6px;
+
+    -ms-overflow-style: none;    /* Hide scrollbar in IE and Edge */
+    scrollbar-width: none;       /* Hide scrollbar in Firefox */
+    overflow-y: scroll;          /* Ensure scrolling still works */
 }
 
+/* Keep Monospace Font for Code Editors */
+.cm-editor .cm-scroller {
+    font-family: "Space Mono", monospace;
+}
+
+/* Scrollbar Styling */
 ::-webkit-scrollbar {
     width: var(--sb-size);
     height: var(--sb-size);
@@ -45,24 +61,20 @@ body {
     }
 }
 
+/* Animations */
 @keyframes up-down {
     0% {
         transform: translateY(-20px);
     }
+
     100% {
         transform: translateY(0px);
     }
 }
 
-/* Editor */
-
+/* Editor Styling */
 .cm-editor {
     max-height: 93vh;
-}
-
-.cm-editor .cm-scroller {
-    font-family: "Space Mono", monospace;
-    /* min-height: 100vh; */
 }
 
 select {
@@ -72,6 +84,17 @@ select {
     cursor: pointer;
 }
 
+/* Hide scrollbar but keep scrolling */
+.custom-scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.custom-scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Responsive Tweaks */
 @media screen and (max-width: 768px) {
     .cm-editor {
         max-height: calc(93vh - 60px);
@@ -82,21 +105,18 @@ select {
     }
 }
 
-/* Github Corner */
-
-.github-corner:hover .octo-arm {
-    animation: octocat-wave 560ms ease-in-out;
-}
-
 @keyframes octocat-wave {
+
     0%,
     100% {
         transform: rotate(0);
     }
+
     20%,
     60% {
         transform: rotate(-25deg);
     }
+
     40%,
     80% {
         transform: rotate(10deg);

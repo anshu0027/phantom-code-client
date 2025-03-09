@@ -7,6 +7,7 @@ import { useEffect, useRef } from "react"
 import customMapping from "@/utils/customMapping"
 import { useSettings } from "@/context/SettingContext"
 import langMap from "lang-map"
+import "@/styles/global.css"
 
 function FileTab() {
     const {
@@ -69,7 +70,7 @@ function FileTab() {
 
     return (
         <div
-            className="flex h-[50px] w-full select-none gap-2 overflow-x-auto p-2 pb-0"
+            className="flex h-[50px] w-full select-none gap-2 overflow-x-auto p-2 pb-0 custom-scrollbar-hide"
             ref={fileTabRef}
         >
             {openFiles.map((file) => (

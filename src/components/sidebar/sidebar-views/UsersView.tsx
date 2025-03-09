@@ -45,33 +45,44 @@ function UsersView() {
     }
 
     return (
-        <div className="flex flex-col p-4" style={{ height: viewHeight }}>
-            <h1 className="view-title">Users</h1>
+        <div
+            className="flex flex-col p-4"
+            style={{
+                height: viewHeight,
+                backgroundColor: "#1E1E2E", // Background color
+                color: "#CDD6F4", // Foreground text
+            }}
+        >
+            <h1 className="text-xl font-semibold">Users</h1>
+
             {/* List of connected users */}
             <Users />
+
             <div className="flex flex-col items-center gap-4 pt-4">
                 <div className="flex w-full gap-4">
                     {/* Share URL button */}
                     <button
-                        className="flex flex-grow items-center justify-center rounded-md bg-white p-3 text-black"
+                        className="flex flex-grow items-center justify-center rounded-md bg-[#CBA6F7] p-3 text-[#1E1E2E] font-semibold hover:bg-[#A990D0] transition"
                         onClick={shareURL}
                         title="Share Link"
                     >
                         <IoShareOutline size={26} />
                     </button>
+
                     {/* Copy URL button */}
                     <button
-                        className="flex flex-grow items-center justify-center rounded-md bg-white p-3 text-black"
+                        className="flex flex-grow items-center justify-center rounded-md bg-[#CBA6F7] p-3 text-[#1E1E2E] font-semibold hover:bg-[#A990D0] transition"
                         onClick={copyURL}
                         title="Copy Link"
                     >
                         <LuCopy size={22} />
                     </button>
+
                     {/* Leave room button */}
                     <button
-                        className="flex flex-grow items-center justify-center rounded-md bg-primary p-3 text-black"
+                        className="flex flex-grow items-center justify-center rounded-md bg-[#F38BA8] p-3 text-[#1E1E2E] font-semibold hover:bg-[#D87892] transition"
                         onClick={leaveRoom}
-                        title="Leave room"
+                        title="Leave Room"
                     >
                         <GoSignOut size={22} />
                     </button>

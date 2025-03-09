@@ -35,27 +35,27 @@ function ChatList() {
 
     return (
         <div
-            className="flex-grow overflow-auto rounded-md bg-darkHover p-2"
+            className="flex-grow overflow-auto rounded-md bg-[#2A2A3A] p-2 shadow-md"
             ref={messagesContainerRef}
             onScroll={handleScroll}
         >
             {/* Chat messages */}
             {messages.map((message, index) => {
+                const isCurrentUser = message.username === currentUser.username
+
                 return (
                     <div
                         key={index}
-                        className={
-                            "mb-2 w-[80%] self-end break-words rounded-md bg-dark px-3 py-2" +
-                            (message.username === currentUser.username
-                                ? " ml-auto "
-                                : "")
-                        }
+                        className={`mb-2 w-[80%] break-words rounded-md px-3 py-2 shadow-sm ${isCurrentUser
+                                ? "ml-auto bg-[#CBA6F7] text-[#1E1E2E]"  // Accent for current user
+                                : "bg-[#1E1E2E] text-[#CDD6F4]"         // Default for others
+                            }`}
                     >
                         <div className="flex justify-between">
-                            <span className="text-xs text-primary">
+                            <span className="text-xs font-semibold text-[#993f2e]">
                                 {message.username}
                             </span>
-                            <span className="text-xs text-white">
+                            <span className="text-xs font-bold text-[#993f2e] opacity-75">
                                 {message.timestamp}
                             </span>
                         </div>

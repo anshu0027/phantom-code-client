@@ -42,9 +42,14 @@ function SettingsView() {
     return (
         <div
             className="flex flex-col items-center gap-2 p-4"
-            style={{ height: viewHeight }}
+            style={{
+                height: viewHeight,
+                backgroundColor: "#1E1E2E", // Background color
+                color: "#CDD6F4", // Foreground text color
+            }}
         >
-            <h1 className="view-title">Settings</h1>
+            <h1 className="text-xl font-semibold">Settings</h1>
+
             {/* Choose Font Family option */}
             <div className="flex w-full items-end gap-2">
                 <Select
@@ -57,18 +62,17 @@ function SettingsView() {
                 <select
                     value={fontSize}
                     onChange={handleFontSizeChange}
-                    className="rounded-md border-none bg-darkHover px-4 py-2 text-white outline-none"
+                    className="rounded-md border border-[#CBA6F7] bg-[#2A2A3A] px-4 py-2 text-[#CDD6F4] outline-none"
                     title="Font Size"
                 >
-                    {[...Array(13).keys()].map((size) => {
-                        return (
-                            <option key={size} value={size + 12}>
-                                {size + 12}
-                            </option>
-                        )
-                    })}
+                    {[...Array(13).keys()].map((size) => (
+                        <option key={size} value={size + 12} className="bg-[#1E1E2E] text-[#CDD6F4]">
+                            {size + 12}
+                        </option>
+                    ))}
                 </select>
             </div>
+
             {/* Choose theme option */}
             <Select
                 onChange={handleThemeChange}
@@ -76,6 +80,7 @@ function SettingsView() {
                 options={Object.keys(editorThemes)}
                 title="Theme"
             />
+
             {/* Choose language option */}
             <Select
                 onChange={handleLanguageChange}
@@ -83,11 +88,12 @@ function SettingsView() {
                 options={langNames}
                 title="Language"
             />
+
             <button
-                className="mt-auto w-full rounded-md border-none bg-darkHover px-4 py-2 text-white outline-none"
+                className="mt-auto w-full rounded-md border-none bg-[#CBA6F7] px-4 py-2 text-[#1E1E2E] font-semibold hover:bg-[#A990D0] transition"
                 onClick={resetSettings}
             >
-                Reset to default
+                Reset to Default
             </button>
         </div>
     )

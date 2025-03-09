@@ -6,7 +6,6 @@ import { ChangeEvent, FormEvent, useEffect, useRef } from "react"
 import { toast } from "react-hot-toast"
 import { useLocation, useNavigate } from "react-router-dom"
 import { v4 as uuidv4 } from "uuid"
-import logo from "@/assets/logo.svg"
 
 const FormComponent = () => {
     const location = useLocation()
@@ -30,16 +29,16 @@ const FormComponent = () => {
 
     const validateForm = () => {
         if (currentUser.username.trim().length === 0) {
-            toast.error("Enter your username")
+            toast.error("Enter your username", { style: { background: "#F38BA8", color: "#1E1E2E" } })
             return false
         } else if (currentUser.roomId.trim().length === 0) {
-            toast.error("Enter a room id")
+            toast.error("Enter a room id", { style: { background: "#F38BA8", color: "#1E1E2E" } })
             return false
         } else if (currentUser.roomId.trim().length < 5) {
-            toast.error("ROOM Id must be at least 5 characters long")
+            toast.error("ROOM Id must be at least 5 characters long", { style: { background: "#F38BA8", color: "#1E1E2E" } })
             return false
         } else if (currentUser.username.trim().length < 3) {
-            toast.error("Username must be at least 3 characters long")
+            toast.error("Username must be at least 3 characters long", { style: { background: "#F38BA8", color: "#1E1E2E" } })
             return false
         }
         return true
@@ -49,7 +48,7 @@ const FormComponent = () => {
         e.preventDefault()
         if (status === USER_STATUS.ATTEMPTING_JOIN) return
         if (!validateForm()) return
-        toast.loading("Joining room...")
+        toast.loading("Joining room...", { style: { background: "#2A2A3A", color: "#CDD6F4" } })
         setStatus(USER_STATUS.ATTEMPTING_JOIN)
         socket.emit(SocketEvent.JOIN_REQUEST, currentUser)
     }
@@ -59,7 +58,7 @@ const FormComponent = () => {
         if (location.state?.roomId) {
             setCurrentUser({ ...currentUser, roomId: location.state.roomId })
             if (currentUser.username.length === 0) {
-                toast.success("Enter your username")
+                toast.success("Enter your username", { style: { background: "#CBA6F7", color: "#1E1E2E" } })
             }
         }
     }, [currentUser, location.state?.roomId, setCurrentUser])
@@ -89,14 +88,13 @@ const FormComponent = () => {
     }, [currentUser, location.state?.redirect, navigate, setStatus, socket, status])
 
     return (
-        <div className="flex w-full max-w-[500px] flex-col items-center justify-center gap-4 p-4 sm:w-[500px] sm:p-8">
-            <img src={logo} alt="Logo" className="w-full"/>
+        <div className="flex w-full max-w-[500px] flex-col items-center justify-center gap-4 p-6 sm:w-[500px] sm:p-8 bg-[#1E1E2E] shadow-xl rounded-lg">
             <form onSubmit={joinRoom} className="flex w-full flex-col gap-4">
                 <input
                     type="text"
                     name="roomId"
                     placeholder="Room Id"
-                    className="w-full rounded-md border border-gray-500 bg-darkHover px-3 py-3 focus:outline-none"
+                    className="w-full rounded-md text-center border border-[#CBA6F7] bg-[#1E1E2E] px-4 py-3 text-[#CDD6F4] focus:outline-none focus:ring-2 focus:ring-[#CBA6F7]"
                     onChange={handleInputChanges}
                     value={currentUser.roomId}
                 />
@@ -104,20 +102,20 @@ const FormComponent = () => {
                     type="text"
                     name="username"
                     placeholder="Username"
-                    className="w-full rounded-md border border-gray-500 bg-darkHover px-3 py-3 focus:outline-none"
+                    className="w-full rounded-md text-center border border-[#CBA6F7] bg-[#1E1E2E] px-4 py-3 text-[#CDD6F4] focus:outline-none focus:ring-2 focus:ring-[#CBA6F7]"
                     onChange={handleInputChanges}
                     value={currentUser.username}
                     ref={usernameRef}
                 />
                 <button
                     type="submit"
-                    className="mt-2 w-full rounded-md bg-primary px-8 py-3 text-lg font-semibold text-black"
+                    className="mt-2 w-full rounded-md bg-[#CBA6F7] px-8 py-3 text-lg font-semibold text-[#1E1E2E] hover:bg-opacity-90 transition"
                 >
-                    Join
+                    Join the ROOM
                 </button>
             </form>
             <button
-                className="cursor-pointer select-none underline"
+                className="cursor-pointer select-none text-[#CBA6F7] underline hover:text-opacity-80 transition"
                 onClick={createNewRoomId}
             >
                 Generate Unique Room Id

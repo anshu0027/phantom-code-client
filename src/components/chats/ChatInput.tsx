@@ -36,19 +36,19 @@ function ChatInput() {
     return (
         <form
             onSubmit={handleSendMessage}
-            className="flex justify-between rounded-md border border-primary"
+            className="flex justify-between rounded-lg border border-[#CBA6F7] bg-secondary p-2"
         >
             <input
                 type="text"
-                className="w-full flex-grow rounded-md border-none bg-dark p-2 outline-none"
+                className="w-full flex-grow text-gray-600 rounded-md border-none bg-background p-2 text-foreground outline-none placeholder-secondary"
                 placeholder="Enter a message..."
                 ref={inputRef}
             />
             <button
-                className="flex items-center justify-center rounded-r-md  bg-primary p-2 text-black"
+                className="flex items-center justify-center rounded-md bg-accent1 p-2 text-background hover:bg-opacity-80 transition"
                 type="submit"
             >
-                <LuSendHorizonal size={24} />
+                <LuSendHorizonal size={24} color="#fff" />
             </button>
         </form>
     )

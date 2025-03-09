@@ -11,7 +11,7 @@ export default {
                 danger: "#ef4444",
             },
             fontFamily: {
-                poppins: ["Poppins", "sans-serif"],
+                orbitron: ["Orbitron", "sans-serif"],
             },
             animation: {
                 "up-down": "up-down 2s ease-in-out infinite alternate",

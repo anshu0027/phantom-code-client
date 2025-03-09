@@ -18,6 +18,7 @@ import CodeMirror, {
 import { useEffect, useMemo, useState } from "react"
 import toast from "react-hot-toast"
 import { cursorTooltipBaseTheme, tooltipField } from "./tooltip"
+import "@/styles/global.css"
 
 function Editor() {
     const { users, currentUser } = useAppContext()
@@ -86,6 +87,7 @@ function Editor() {
             extensions={extensions}
             minHeight="100%"
             maxWidth="100vw"
+            className="custom-scrollbar-hide"
             style={{
                 fontSize: fontSize + "px",
                 height: viewHeight,

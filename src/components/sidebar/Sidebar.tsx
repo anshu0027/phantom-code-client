@@ -46,7 +46,7 @@ function Sidebar() {
         <aside className="flex w-full md:h-full md:max-h-full md:min-h-full md:w-auto">
             <div
                 className={cn(
-                    "fixed bottom-0 left-0 z-50 flex h-[50px] w-full gap-4 self-end overflow-hidden border-t border-darkHover bg-dark p-2 md:static md:h-full md:w-[50px] md:min-w-[50px] md:flex-col md:border-r md:border-t-0 md:p-2 md:pt-4",
+                    "fixed bottom-0 left-0 z-50 flex h-[50px] w-full gap-4 self-end overflow-hidden border-t bg-[#2A2A3A] p-2 md:static md:h-full md:w-[50px] md:min-w-[50px] md:flex-col md:border-r md:border-t-0 md:p-2 md:pt-4",
                     {
                         hidden: minHeightReached,
                     },
@@ -75,15 +75,17 @@ function Sidebar() {
 
                 {/* Button to change activity state coding or drawing */}
                 <div className="flex items-center justify-center h-fit">
-                    <button className="flex items-center justify-cente  rounded transition-colors duration-200 ease-in-out hover:bg-[#3D404A] p-1.5"
-                    onClick={changeState}
-                    onMouseEnter={() => setShowTooltip(true)}
-                    data-tooltip-id="activity-state-tooltip"
-                    data-tooltip-content={
-                            activityState === ACTIVITY_STATE.CODING 
-                                ? "Switch to Drawing Mode" 
+                    <button
+                        className="flex items-center justify-center rounded transition-all duration-200 ease-in-out bg-[#1E1E2E] p-1.5 hover:bg-[#CBA6F7] hover:text-[#1E1E2E]"
+                        onClick={changeState}
+                        onMouseEnter={() => setShowTooltip(true)}
+                        data-tooltip-id="activity-state-tooltip"
+                        data-tooltip-content={
+                            activityState === ACTIVITY_STATE.CODING
+                                ? "Switch to Drawing Mode"
                                 : "Switch to Coding Mode"
-                    }>
+                        }
+                    >
                         {activityState === ACTIVITY_STATE.CODING ? (
                             <MdOutlineDraw size={30} />
                         ) : (
@@ -91,12 +93,17 @@ function Sidebar() {
                         )}
                     </button>
                     {showTooltip && (
-                        <Tooltip 
+                        <Tooltip
                             id="activity-state-tooltip"
                             place="right"
                             offset={15}
                             className="!z-50"
-                            style={tooltipStyles}
+                            style={{
+                                ...tooltipStyles,
+                                backgroundColor: "#2A2A3A",
+                                color: "#CDD6F4",
+                                border: "1px solid #CBA6F7"
+                            }}
                             noArrow={false}
                             positionStrategy="fixed"
                             float={true}
@@ -105,7 +112,7 @@ function Sidebar() {
                 </div>
             </div>
             <div
-                className="absolute left-0 top-0 z-20 w-full flex-col bg-dark md:static md:min-w-[300px]"
+                className="absolute left-0 top-0 z-20 w-full flex-col bg-[#1E1E2E] md:static md:min-w-[300px]"
                 style={isSidebarOpen ? {} : { display: "none" }}
             >
                 {/* Render the active view component */}

@@ -186,7 +186,7 @@ function FilesView() {
             >
                 <hr />
                 <button
-                    className="mt-2 flex w-full justify-start rounded-md p-2 transition-all hover:bg-darkHover"
+                    className="mt-2 flex w-full justify-start rounded-md p-2 transition-all hover:bg-[#CBA6F7] hover:text-gray-800"
                     onClick={handleOpenDirectory}
                     disabled={isLoading}
                 >
@@ -194,7 +194,7 @@ function FilesView() {
                     {isLoading ? "Loading..." : "Open File/Folder"}
                 </button>
                 <button
-                    className="flex w-full justify-start rounded-md p-2 transition-all hover:bg-darkHover"
+                    className="flex w-full justify-start rounded-md p-2 transition-all hover:bg-[#CBA6F7] hover:text-gray-800"
                     onClick={downloadFilesAndFolders}
                 >
                     <BiArchiveIn className="mr-2" size={22} /> Download Code

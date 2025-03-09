@@ -30,13 +30,14 @@ function RunView() {
     return (
         <div
             className="flex flex-col items-center gap-2 p-4"
-            style={{ height: viewHeight }}
+            style={{ height: viewHeight, backgroundColor: "#1E1E2E" }}
         >
-            <h1 className="view-title">Run Code</h1>
+            <h1 className="text-xl font-bold text-[#CDD6F4]">Run Code</h1>
             <div className="flex h-[90%] w-full flex-col items-end gap-2 md:h-[92%]">
+                {/* Language Selector */}
                 <div className="relative w-full">
                     <select
-                        className="w-full rounded-md border-none bg-darkHover px-4 py-2 text-white outline-none"
+                        className="w-full rounded-md border-none bg-[#2A2A3A] px-4 py-2 text-[#CDD6F4] outline-none"
                         value={JSON.stringify(selectedLanguage)}
                         onChange={handleLanguageChange}
                     >
@@ -47,6 +48,7 @@ function RunView() {
                                     <option
                                         key={i}
                                         value={JSON.stringify(lang)}
+                                        className="bg-[#2A2A3A] text-[#CDD6F4]"
                                     >
                                         {lang.language +
                                             (lang.version
@@ -58,31 +60,37 @@ function RunView() {
                     </select>
                     <PiCaretDownBold
                         size={16}
-                        className="absolute bottom-3 right-4 z-10 text-white"
+                        className="absolute bottom-3 right-4 z-10 text-[#CDD6F4]"
                     />
                 </div>
+
+                {/* Input Box */}
                 <textarea
-                    className="min-h-[120px] w-full resize-none rounded-md border-none bg-darkHover p-2 text-white outline-none"
-                    placeholder="Write you input here..."
+                    className="min-h-[120px] w-full resize-none rounded-md border-none bg-[#2A2A3A] p-2 text-[#CDD6F4] outline-none"
+                    placeholder="Write your input here..."
                     onChange={(e) => setInput(e.target.value)}
                 />
+
+                {/* Run Button */}
                 <button
-                    className="flex w-full justify-center rounded-md bg-primary p-2 font-bold text-black outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex w-full justify-center rounded-md bg-[#CBA6F7] p-2 font-bold text-[#1E1E2E] outline-none transition-all duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                     onClick={runCode}
                     disabled={isRunning}
                 >
                     Run
                 </button>
-                <label className="flex w-full justify-between">
+
+                {/* Output Section */}
+                <label className="flex w-full justify-between text-[#CDD6F4]">
                     Output :
                     <button onClick={copyOutput} title="Copy Output">
                         <LuCopy
                             size={18}
-                            className="cursor-pointer text-white"
+                            className="cursor-pointer text-[#CDD6F4] hover:text-[#CBA6F7] transition-all duration-200"
                         />
                     </button>
                 </label>
-                <div className="w-full flex-grow resize-none overflow-y-auto rounded-md border-none bg-darkHover p-2 text-white outline-none">
+                <div className="w-full flex-grow resize-none overflow-y-auto rounded-md border-none bg-[#2A2A3A] p-2 text-[#F5E0DC] outline-none">
                     <code>
                         <pre className="text-wrap">{output}</pre>
                     </code>
