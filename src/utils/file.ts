@@ -2,7 +2,7 @@ import { FileSystemItem, Id } from "@/types/file"
 import { v4 as uuidv4 } from "uuid"
 
 const initialCode = `function sayHi() {
-  console.log("SGP Group Project");
+  console.log("Welcome to Phantom Code!");
 }
 
 sayHi()`
@@ -15,7 +15,7 @@ export const initialFileStructure: FileSystemItem = {
         {
             id: uuidv4(),
             type: "file",
-            name: "sgp.js",
+            name: "phantom.js",
             content: initialCode,
         },
     ],
