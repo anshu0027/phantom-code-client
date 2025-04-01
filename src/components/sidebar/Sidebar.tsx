@@ -1,3 +1,4 @@
+import { IoMdCode } from "react-icons/io"; 
 import SidebarButton from "@/components/sidebar/sidebar-views/SidebarButton"
 import { useAppContext } from "@/context/AppContext"
 import { useSocket } from "@/context/SocketContext"
@@ -7,7 +8,6 @@ import useWindowDimensions from "@/hooks/useWindowDimensions"
 import { ACTIVITY_STATE } from "@/types/app"
 import { SocketEvent } from "@/types/socket"
 import { VIEWS } from "@/types/view"
-import { IoCodeSlash } from "react-icons/io5"
 import { MdOutlineDraw } from "react-icons/md"
 import cn from "classnames"
 import { Tooltip } from 'react-tooltip'
@@ -89,7 +89,7 @@ function Sidebar() {
                         {activityState === ACTIVITY_STATE.CODING ? (
                             <MdOutlineDraw size={30} />
                         ) : (
-                            <IoCodeSlash size={30} />
+                                <IoMdCode size={30} />
                         )}
                     </button>
                     {showTooltip && (
@@ -112,7 +112,7 @@ function Sidebar() {
                 </div>
             </div>
             <div
-                className="absolute left-0 top-0 z-20 w-full flex-col bg-[#1E1E2E] md:static md:min-w-[300px]"
+                className="absolute left-0 top-0 z-20 w-full flex-col bg-[#2A2A3A] md:static md:min-w-[300px]"
                 style={isSidebarOpen ? {} : { display: "none" }}
             >
                 {/* Render the active view component */}

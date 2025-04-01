@@ -1,15 +1,11 @@
+"use client"
+
 import { useAppContext } from "@/context/AppContext"
 import { useChatRoom } from "@/context/ChatContext"
-import { SyntheticEvent, useEffect, useRef } from "react"
+import { type SyntheticEvent, useEffect, useRef } from "react"
 
 function ChatList() {
-    const {
-        messages,
-        isNewMessage,
-        setIsNewMessage,
-        lastScrollHeight,
-        setLastScrollHeight,
-    } = useChatRoom()
+    const { messages, isNewMessage, setIsNewMessage, lastScrollHeight, setLastScrollHeight } = useChatRoom()
     const { currentUser } = useAppContext()
     const messagesContainerRef = useRef<HTMLDivElement | null>(null)
 
@@ -21,16 +17,14 @@ function ChatList() {
     // Scroll to bottom when messages change
     useEffect(() => {
         if (!messagesContainerRef.current) return
-        messagesContainerRef.current.scrollTop =
-            messagesContainerRef.current.scrollHeight
+        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
     }, [messages])
 
     useEffect(() => {
         if (isNewMessage) {
             setIsNewMessage(false)
         }
-        if (messagesContainerRef.current)
-            messagesContainerRef.current.scrollTop = lastScrollHeight
+        if (messagesContainerRef.current) messagesContainerRef.current.scrollTop = lastScrollHeight
     }, [isNewMessage, setIsNewMessage, lastScrollHeight])
 
     return (
@@ -42,24 +36,27 @@ function ChatList() {
             {/* Chat messages */}
             {messages.map((message, index) => {
                 const isCurrentUser = message.username === currentUser.username
+                const isAI = message.username === "AI Assistant"
 
                 return (
                     <div
                         key={index}
-                        className={`mb-2 w-[80%] break-words rounded-md px-3 py-2 shadow-sm ${isCurrentUser
-                                ? "ml-auto bg-[#CBA6F7] text-[#1E1E2E]"  // Accent for current user
-                                : "bg-[#1E1E2E] text-[#CDD6F4]"         // Default for others
+                        className={`mb-2 w-[80%] break-words rounded-md px-3 py-2 shadow-sm ${isAI
+                                ? "ml-auto bg-[#89B4FA] text-[#1E1E2E]" // AI messages
+                                : isCurrentUser
+                                    ? "ml-auto bg-[#CBA6F7] text-[#1E1E2E]" // Current user
+                                    : "bg-[#1E1E2E] text-[#CDD6F4]" // Other users
                             }`}
                     >
                         <div className="flex justify-between">
-                            <span className="text-xs font-semibold text-[#993f2e]">
+                            <span className={`text-xs font-semibold ${isAI ? "text-[#1E1E2E]" : "text-[#993f2e]"}`}>
                                 {message.username}
                             </span>
-                            <span className="text-xs font-bold text-[#993f2e] opacity-75">
+                            <span className={`text-xs font-bold ${isAI ? "text-[#1E1E2E]" : "text-[#993f2e]"} opacity-75`}>
                                 {message.timestamp}
                             </span>
                         </div>
-                        <p className="py-1">{message.message}</p>
+                        <p className="py-1 whitespace-pre-wrap">{message.message}</p>
                     </div>
                 )
             })}
@@ -68,3 +65,4 @@ function ChatList() {
 }
 
 export default ChatList
+
