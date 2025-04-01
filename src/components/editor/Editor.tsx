@@ -19,6 +19,7 @@ import { useEffect, useMemo, useState } from "react"
 import toast from "react-hot-toast"
 import { cursorTooltipBaseTheme, tooltipField } from "./tooltip"
 import "@/styles/global.css"
+import { GoogleGenerativeAI } from "@google/generative-ai"
 
 function Editor() {
     const { users, currentUser } = useAppContext()
@@ -26,12 +27,40 @@ function Editor() {
     const { theme, language, fontSize } = useSettings()
     const { socket } = useSocket()
     const { viewHeight } = useResponsive()
-    const [timeOut, setTimeOut] = useState(setTimeout(() => {}, 0))
+    const [timeOut, setTimeOut] = useState(setTimeout(() => { }, 0))
+    const [extensions, setExtensions] = useState<Extension[]>([])
+    const [suggestion, setSuggestion] = useState<string | null>(null)
+    const [isProcessing, setIsProcessing] = useState(false)
     const filteredUsers = useMemo(
         () => users.filter((u) => u.username !== currentUser.username),
         [users, currentUser],
     )
-    const [extensions, setExtensions] = useState<Extension[]>([])
+
+    const getApiKey = () => import.meta.env.VITE_GOOGLE_API_KEY
+
+    const handleAIRequest = async (code: string, lang: string) => {
+        try {
+            setIsProcessing(true)
+            const apiKey = getApiKey()
+            if (!apiKey) {
+                throw new Error("Google API key is not configured")
+            }
+
+            const genAI = new GoogleGenerativeAI(apiKey)
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+
+            const prompt = `Provide a code suggestion for the following ${lang} code snippet. Return only the suggested code without explanation:\n\n${code}`
+            const result = await model.generateContent(prompt)
+            const response = result.response
+            const suggestedCode = response.text()
+            setSuggestion(suggestedCode.trim())
+        } catch (error) {
+            console.error("AI suggestion failed:", error)
+            setSuggestion(null)
+        } finally {
+            setIsProcessing(false)
+        }
+    }
 
     const onCodeChange = (code: string, view: ViewUpdate) => {
         if (!activeFile) return
@@ -46,14 +75,16 @@ function Editor() {
         })
         clearTimeout(timeOut)
 
-        const newTimeOut = setTimeout(
-            () => socket.emit(SocketEvent.TYPING_PAUSE),
-            1000,
-        )
+        const newTimeOut = setTimeout(() => {
+            socket.emit(SocketEvent.TYPING_PAUSE)
+            // Trigger AI suggestion after pause
+            if (!isProcessing) {
+                handleAIRequest(code, language)
+            }
+        }, 1000)
         setTimeOut(newTimeOut)
     }
 
-    // Listen wheel event to zoom in/out and prevent page reload
     usePageEvents()
 
     useEffect(() => {
@@ -79,21 +110,53 @@ function Editor() {
         setExtensions(extensions)
     }, [filteredUsers, language])
 
+    const applySuggestion = () => {
+        if (!suggestion || !activeFile) return
+        const updatedFile: FileSystemItem = { ...activeFile, content: suggestion }
+        setActiveFile(updatedFile)
+        socket.emit(SocketEvent.FILE_UPDATED, {
+            fileId: activeFile.id,
+            newContent: suggestion,
+        })
+        setSuggestion(null)
+    }
+
     return (
-        <CodeMirror
-            theme={editorThemes[theme]}
-            onChange={onCodeChange}
-            value={activeFile?.content}
-            extensions={extensions}
-            minHeight="100%"
-            maxWidth="100vw"
-            className="custom-scrollbar-hide"
-            style={{
-                fontSize: fontSize + "px",
-                height: viewHeight,
-                position: "relative",
-            }}
-        />
+        <div className="relative">
+            <CodeMirror
+                theme={editorThemes[theme]}
+                onChange={onCodeChange}
+                value={activeFile?.content}
+                extensions={extensions}
+                minHeight="100%"
+                maxWidth="100vw"
+                className="custom-scrollbar-hide"
+                style={{
+                    fontSize: fontSize + "px",
+                    height: viewHeight,
+                    position: "relative",
+                }}
+            />
+            {suggestion && !isProcessing && (
+                <div className="absolute bottom-4 right-4 bg-gray-800 text-white p-2 rounded-md shadow-lg">
+                    <p className="text-sm mb-2">AI Suggestion:</p>
+                    <pre className="bg-gray-900 p-2 rounded-md max-h-40 overflow-auto">
+                        {suggestion}
+                    </pre>
+                    <button
+                        onClick={applySuggestion}
+                        className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded-md"
+                    >
+                        Apply
+                    </button>
+                </div>
+            )}
+            {isProcessing && (
+                <div className="absolute bottom-4 right-4 bg-gray-800 text-white p-2 rounded-md shadow-lg">
+                    <p className="text-sm">Generating suggestion...</p>
+                </div>
+            )}
+        </div>
     )
 }
 

@@ -55,7 +55,7 @@ function ChatInput() {
             const aiMessage: ChatMessage = {
                 id: loadingMessage.id,
                 message: `\`\`\`typescript\n${text}\n\`\`\``, // Add code block with syntax highlighting
-                username: "AI Assistant",
+                username: "AI Coder",
                 timestamp: formatDate(new Date().toISOString()),
             }
 

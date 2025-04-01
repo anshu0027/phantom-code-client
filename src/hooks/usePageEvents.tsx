@@ -6,7 +6,7 @@ function usePageEvents() {
 
     useEffect(() => {
         // Prevent user from leaving the page
-        const beforeUnloadHandler = (e: any) => {
+        const beforeUnloadHandler = (e: BeforeUnloadEvent) => {
             const msg = "Changes you made may not be saved"
             return (e.returnValue = msg)
         }
@@ -19,11 +19,11 @@ function usePageEvents() {
     }, [])
 
     useEffect(() => {
-        const handleWheel = (e: any) => {
+        const handleWheel = (e: WheelEvent) => {
             if (e.ctrlKey) {
                 // Prevent default browser zoom behavior
                 e.preventDefault()
-                if (!e.target.closest(".cm-editor")) return
+                if (!e.target || !(e.target as Element).closest(".cm-editor")) return
                 if (e.deltaY > 0) {
                     setFontSize(Math.max(fontSize - 1, 12))
                 } else {
