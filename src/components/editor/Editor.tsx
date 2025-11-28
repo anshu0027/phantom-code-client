@@ -10,6 +10,7 @@ import { SocketEvent } from "@/types/socket"
 import { color } from "@uiw/codemirror-extensions-color"
 import { hyperLink } from "@uiw/codemirror-extensions-hyper-link"
 import { LanguageName, loadLanguage } from "@uiw/codemirror-extensions-langs"
+import { normalizeLanguageName } from "@/utils/customMapping"
 import CodeMirror, {
     Extension,
     ViewUpdate,
@@ -49,7 +50,7 @@ function Editor() {
             const genAI = new GoogleGenerativeAI(apiKey)
             const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
 
-            const prompt = `Provide a code suggestion for the following ${lang} code snippet. Return only the suggested code without explanation:\n\n${code}`
+            const prompt = `Provide only the suggested improvement for the following ${lang} code snippet. Do not include language identifiers, markdown, comments, or any explanation. Output only the raw code — nothing else.\n\n${code}`
             const result = await model.generateContent(prompt)
             const response = result.response
             const suggestedCode = response.text()
@@ -95,16 +96,28 @@ function Editor() {
             cursorTooltipBaseTheme,
             scrollPastEnd(),
         ]
-        const langExt = loadLanguage(language.toLowerCase() as LanguageName)
+        
+        // Normalize language name to match CodeMirror's expected format
+        const normalizedLang = normalizeLanguageName(language)
+        const langExt = loadLanguage(normalizedLang as LanguageName)
+        
         if (langExt) {
             extensions.push(langExt)
         } else {
-            toast.error(
-                "Syntax highlighting is unavailable for this language. Please adjust the editor settings; it may be listed under a different name.",
-                {
-                    duration: 5000,
-                },
-            )
+            // Only show error if language was explicitly set (not the default fallback)
+            if (language && language.toLowerCase() !== "javascript") {
+                toast.error(
+                    `Syntax highlighting is unavailable for "${language}". Using JavaScript syntax instead.`,
+                    {
+                        duration: 3000,
+                    },
+                )
+            }
+            // Fallback to javascript if language not found
+            const fallbackExt = loadLanguage("javascript" as LanguageName)
+            if (fallbackExt) {
+                extensions.push(fallbackExt)
+            }
         }
 
         setExtensions(extensions)
@@ -138,7 +151,7 @@ function Editor() {
                 }}
             />
             {suggestion && !isProcessing && (
-                <div className="absolute bottom-4 right-4 bg-gray-800 text-white p-2 rounded-md shadow-lg">
+                <div className="absolute bottom-[100px] right-4 bg-gray-800 text-white p-2 rounded-md shadow-lg">
                     <p className="text-sm mb-2">AI Suggestion:</p>
                     <pre className="bg-gray-900 p-2 rounded-md max-h-40 overflow-auto">
                         {suggestion}

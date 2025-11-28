@@ -4,7 +4,7 @@ import { Icon } from "@iconify/react"
 import { IoClose } from "react-icons/io5"
 import cn from "classnames"
 import { useEffect, useRef } from "react"
-import customMapping from "@/utils/customMapping"
+import customMapping, { normalizeLanguageName } from "@/utils/customMapping"
 import { useSettings } from "@/context/SettingContext"
 import langMap from "lang-map"
 import "@/styles/global.css"
@@ -64,13 +64,20 @@ function FileTab() {
             return
         }
 
-        const language = langMap.languages(extension)
-        setLanguage(language[0])
+        const languages = langMap.languages(extension)
+        if (languages && languages.length > 0) {
+            // Normalize the language name to ensure it matches CodeMirror's format
+            const normalizedLang = normalizeLanguageName(languages[0])
+            setLanguage(normalizedLang)
+        } else {
+            // Fallback to javascript if no language found
+            setLanguage("javascript")
+        }
     }, [activeFile?.name, setLanguage])
 
     return (
         <div
-            className="flex h-[50px] w-full select-none gap-2 overflow-x-auto p-2 pb-0 custom-scrollbar-hide"
+            className="flex w-full mb-2 min-h-[50px] select-none gap-2 overflow-x-auto p-2 pb-0 custom-scrollbar-hide"
             ref={fileTabRef}
         >
             {openFiles.map((file) => (

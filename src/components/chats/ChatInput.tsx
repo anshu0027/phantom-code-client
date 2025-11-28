@@ -8,7 +8,6 @@ import type { ChatMessage } from "@/types/chat"
 import { SocketEvent } from "@/types/socket"
 import { formatDate } from "@/utils/formateDate"
 import { type FormEvent, useRef, useState } from "react"
-import { v4 as uuidV4 } from "uuid"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 
 function ChatInput() {
@@ -26,7 +25,7 @@ function ChatInput() {
 
             // Add a loading message from AI
             const loadingMessage: ChatMessage = {
-                id: uuidV4(),
+                id: crypto.randomUUID(),
                 message: "Processing your request...",
                 username: "AI Assistant",
                 timestamp: formatDate(new Date().toISOString()),
@@ -54,7 +53,7 @@ function ChatInput() {
             // Replace loading message with actual response
             const aiMessage: ChatMessage = {
                 id: loadingMessage.id,
-                message: `\`\`\`typescript\n${text}\n\`\`\``, // Add code block with syntax highlighting
+                message: `${text}`, // Add code block with syntax highlighting
                 username: "AI Coder",
                 timestamp: formatDate(new Date().toISOString()),
             }
@@ -71,7 +70,7 @@ function ChatInput() {
 
             // Send error message
             const errorChatMessage: ChatMessage = {
-                id: uuidV4(),
+                id: crypto.randomUUID(),
                 message: `Sorry, I couldn't process your request: ${errorMessage}`,
                 username: "AI Assistant",
                 timestamp: formatDate(new Date().toISOString()),
@@ -94,7 +93,7 @@ function ChatInput() {
             if (inputVal.startsWith("@ai")) {
                 // Send the user's message first
                 const userMessage: ChatMessage = {
-                    id: uuidV4(),
+                    id: crypto.randomUUID(),
                     message: inputVal,
                     username: currentUser.username,
                     timestamp: formatDate(new Date().toISOString()),
@@ -103,14 +102,15 @@ function ChatInput() {
                 setMessages((messages) => [...messages, userMessage])
 
                 // Extract the prompt (everything after "@ai ")
-                const prompt = inputVal.substring(4).trim()
-                if (prompt) {
-                    await handleAIRequest(prompt)
+                const code = inputVal.substring(4).trim()
+                const promptToPass = `Provide only the suggested code for the following snippet. Do not include any formatting, language tags, comments, explanation, or extra text. Return raw code only — nothing else.\n\n${code}`
+                if (promptToPass) {
+                    await handleAIRequest(promptToPass)
                 }
             } else {
                 // Regular message
                 const message: ChatMessage = {
-                    id: uuidV4(),
+                    id: crypto.randomUUID(),
                     message: inputVal,
                     username: currentUser.username,
                     timestamp: formatDate(new Date().toISOString()),

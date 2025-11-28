@@ -1,5 +1,4 @@
 import { FileSystemItem, Id } from "@/types/file"
-import { v4 as uuidv4 } from "uuid"
 
 const initialCode = `function sayHi() {
   console.log("Welcome to Phantom Code!");
@@ -9,11 +8,11 @@ sayHi()`
 
 export const initialFileStructure: FileSystemItem = {
     name: "root",
-    id: uuidv4(),
+    id: crypto.randomUUID(),
     type: "directory",
     children: [
         {
-            id: uuidv4(),
+            id: crypto.randomUUID(),
             type: "file",
             name: "phantom.js",
             content: initialCode,

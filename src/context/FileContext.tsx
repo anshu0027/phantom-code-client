@@ -24,7 +24,6 @@ import {
     useState,
 } from "react"
 import { toast } from "react-hot-toast"
-import { v4 as uuidv4 } from "uuid"
 import { useAppContext } from "./AppContext"
 import { useSocket } from "./SocketContext"
 
@@ -96,7 +95,7 @@ function FileContextProvider({ children }: { children: ReactNode }) {
             let newDirectory: FileSystemItem
             if (typeof newDir === "string") {
                 newDirectory = {
-                    id: uuidv4(),
+                    id: crypto.randomUUID(),
                     name: newDir,
                     type: "directory",
                     children: [],
@@ -371,7 +370,7 @@ function FileContextProvider({ children }: { children: ReactNode }) {
                 }
 
                 newFile = {
-                    id: uuidv4(),
+                    id: crypto.randomUUID(),
                     name,
                     type: "file",
                     content: "",

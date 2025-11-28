@@ -1,5 +1,4 @@
 import { useEffect } from "react"
-import screenfull from "screenfull"
 
 function useFullScreen() {
     function detectMob() {
@@ -22,8 +21,11 @@ function useFullScreen() {
     useEffect(() => {
         if (!isMobile) return
 
-        if (screenfull.isEnabled) {
-            screenfull.request()
+        // Use native Fullscreen API
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch((err) => {
+                console.error("Error attempting to enable fullscreen:", err)
+            })
         }
     }, [isMobile])
 }

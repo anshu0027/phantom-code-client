@@ -5,7 +5,6 @@ import { USER_STATUS } from "@/types/user"
 import { ChangeEvent, FormEvent, useEffect, useRef } from "react"
 import { toast } from "react-hot-toast"
 import { useLocation, useNavigate } from "react-router-dom"
-import { v4 as uuidv4 } from "uuid"
 
 const FormComponent = () => {
     const location = useLocation()
@@ -16,7 +15,7 @@ const FormComponent = () => {
     const navigate = useNavigate()
 
     const createNewRoomId = () => {
-        setCurrentUser({ ...currentUser, roomId: uuidv4() })
+        setCurrentUser({ ...currentUser, roomId: crypto.randomUUID() })
         toast.success("Created a new Room Id")
         usernameRef.current?.focus()
     }

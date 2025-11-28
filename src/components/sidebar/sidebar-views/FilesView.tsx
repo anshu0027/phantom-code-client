@@ -6,7 +6,6 @@ import { FileSystemItem } from "@/types/file"
 import cn from "classnames"
 import { BiArchiveIn } from "react-icons/bi"
 import { TbFileUpload } from "react-icons/tb"
-import { v4 as uuidV4 } from "uuid"
 import { toast } from "react-hot-toast"
 
 function FilesView() {
@@ -79,7 +78,7 @@ function FilesView() {
             if (entry.kind === "file") {
                 const file = await entry.getFile()
                 const newFile: FileSystemItem = {
-                    id: uuidV4(),
+                    id: crypto.randomUUID(),
                     name: entry.name,
                     type: "file",
                     content: await readFileContent(file),
@@ -89,7 +88,7 @@ function FilesView() {
                 if (blackList.includes(entry.name)) continue
 
                 const newDirectory: FileSystemItem = {
-                    id: uuidV4(),
+                    id: crypto.randomUUID(),
                     name: entry.name,
                     type: "directory",
                     children: await readDirectory(entry),
@@ -120,7 +119,7 @@ function FilesView() {
 
                 if (directoryIndex === -1) {
                     const newDirectory: FileSystemItem = {
-                        id: uuidV4(),
+                        id: crypto.randomUUID(),
                         name: directoryPath,
                         type: "directory",
                         children: [],
@@ -130,7 +129,7 @@ function FilesView() {
                 }
 
                 const newFile: FileSystemItem = {
-                    id: uuidV4(),
+                    id: crypto.randomUUID(),
                     name: file.name,
                     type: "file",
                     content: await readFileContent(file),
@@ -145,7 +144,7 @@ function FilesView() {
                 }
             } else {
                 const newFile: FileSystemItem = {
-                    id: uuidV4(),
+                    id: crypto.randomUUID(),
                     name: file.name,
                     type: "file",
                     content: await readFileContent(file),

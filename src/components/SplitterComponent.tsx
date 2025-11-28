@@ -60,7 +60,7 @@ function SplitterComponent({ children }: { children: ReactNode }) {
             snapOffset={30}
             gutterStyle={getGutterStyle}
             onDrag={handleGutterDrag}
-            className="flex h-screen min-h-screen max-w-full items-center justify-center overflow-hidden bg-[#1E1E2E] text-[#CDD6F4]"
+            className="flex h-screen min-h-screen    max-w-full items-center justify-center overflow-hidden bg-[#1E1E2E] text-[#CDD6F4]"
         >
             {children}
         </Split>
