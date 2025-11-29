@@ -17,10 +17,11 @@ import CodeMirror, {
     scrollPastEnd,
 } from "@uiw/react-codemirror"
 import { useEffect, useMemo, useState } from "react"
-import toast from "react-hot-toast"
+import { toastError } from "@/utils/toast"
 import { cursorTooltipBaseTheme, tooltipField } from "./tooltip"
 import "@/styles/global.css"
 import { GoogleGenerativeAI } from "@google/generative-ai"
+import { logger } from "@/utils/logger"
 
 function Editor() {
     const { users, currentUser } = useAppContext()
@@ -56,7 +57,7 @@ function Editor() {
             const suggestedCode = response.text()
             setSuggestion(suggestedCode.trim())
         } catch (error) {
-            console.error("AI suggestion failed:", error)
+            logger.error("AI suggestion failed:", error)
             setSuggestion(null)
         } finally {
             setIsProcessing(false)
@@ -106,11 +107,8 @@ function Editor() {
         } else {
             // Only show error if language was explicitly set (not the default fallback)
             if (language && language.toLowerCase() !== "javascript") {
-                toast.error(
+                toastError(
                     `Syntax highlighting is unavailable for "${language}". Using JavaScript syntax instead.`,
-                    {
-                        duration: 3000,
-                    },
                 )
             }
             // Fallback to javascript if language not found

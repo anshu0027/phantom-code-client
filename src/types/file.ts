@@ -15,6 +15,7 @@ interface FileContext {
     fileStructure: FileSystemItem
     openFiles: FileSystemItem[]
     activeFile: FileSystemItem | null
+    isFileOperationLoading: boolean
     setActiveFile: (file: FileSystemItem) => void
     closeFile: (fileId: Id) => void
     toggleDirectory: (dirId: Id) => void

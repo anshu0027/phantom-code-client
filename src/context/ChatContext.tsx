@@ -29,7 +29,9 @@ function ChatContextProvider({ children }: { children: ReactNode }) {
         socket.on(
             SocketEvent.RECEIVE_MESSAGE,
             ({ message }: { message: ChatMessage }) => {
-                setMessages((messages) => [...messages, message])
+                const id = message.id || crypto.randomUUID()
+                const normalizedMessage: ChatMessage = { ...message, id }
+                setMessages((prev) => [...prev, normalizedMessage])
                 setIsNewMessage(true)
             },
         )

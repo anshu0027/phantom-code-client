@@ -29,19 +29,19 @@ function ChatList() {
 
     return (
         <div
-            className="flex-grow overflow-auto rounded-md bg-[#2A2A3A] p-2 shadow-md"
+            className="grow overflow-auto rounded-md bg-[#2A2A3A] p-2 shadow-md"
             ref={messagesContainerRef}
             onScroll={handleScroll}
         >
             {/* Chat messages */}
-            {messages.map((message, index) => {
+            {messages.map((message) => {
                 const isCurrentUser = message.username === currentUser.username
                 const isAI = message.username === "AI Assistant"
 
                 return (
                     <div
-                        key={index}
-                        className={`mb-2 w-[80%] break-words rounded-md px-3 py-2 shadow-sm ${isAI
+                        key={message.id}
+                        className={`mb-2 w-[80%] wrap-break-word rounded-md px-3 py-2 shadow-sm ${isAI
                                 ? "ml-auto bg-[#89B4FA] text-[#1E1E2E]" // AI messages
                                 : isCurrentUser
                                     ? "ml-auto bg-[#CBA6F7] text-[#1E1E2E]" // Current user

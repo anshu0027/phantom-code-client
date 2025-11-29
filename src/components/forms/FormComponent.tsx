@@ -3,7 +3,7 @@ import { useSocket } from "@/context/SocketContext"
 import { SocketEvent } from "@/types/socket"
 import { USER_STATUS } from "@/types/user"
 import { ChangeEvent, FormEvent, useEffect, useRef } from "react"
-import { toast } from "react-hot-toast"
+import { toastError, toastLoading, toastSuccess } from "@/utils/toast"
 import { useLocation, useNavigate } from "react-router-dom"
 
 const FormComponent = () => {
@@ -16,7 +16,7 @@ const FormComponent = () => {
 
     const createNewRoomId = () => {
         setCurrentUser({ ...currentUser, roomId: crypto.randomUUID() })
-        toast.success("Created a new Room Id")
+        toastSuccess("Created a new Room Id")
         usernameRef.current?.focus()
     }
 
@@ -28,16 +28,16 @@ const FormComponent = () => {
 
     const validateForm = () => {
         if (currentUser.username.trim().length === 0) {
-            toast.error("Enter your username", { style: { background: "#F38BA8", color: "#1E1E2E" } })
+            toastError("Enter your username")
             return false
         } else if (currentUser.roomId.trim().length === 0) {
-            toast.error("Enter a room id", { style: { background: "#F38BA8", color: "#1E1E2E" } })
+            toastError("Enter a room id")
             return false
         } else if (currentUser.roomId.trim().length < 5) {
-            toast.error("ROOM Id must be at least 5 characters long", { style: { background: "#F38BA8", color: "#1E1E2E" } })
+            toastError("ROOM Id must be at least 5 characters long")
             return false
         } else if (currentUser.username.trim().length < 3) {
-            toast.error("Username must be at least 3 characters long", { style: { background: "#F38BA8", color: "#1E1E2E" } })
+            toastError("Username must be at least 3 characters long")
             return false
         }
         return true
@@ -47,7 +47,7 @@ const FormComponent = () => {
         e.preventDefault()
         if (status === USER_STATUS.ATTEMPTING_JOIN) return
         if (!validateForm()) return
-        toast.loading("Joining room...", { style: { background: "#2A2A3A", color: "#CDD6F4" } })
+        toastLoading("Joining room...")
         setStatus(USER_STATUS.ATTEMPTING_JOIN)
         socket.emit(SocketEvent.JOIN_REQUEST, currentUser)
     }
@@ -57,7 +57,7 @@ const FormComponent = () => {
         if (location.state?.roomId) {
             setCurrentUser({ ...currentUser, roomId: location.state.roomId })
             if (currentUser.username.length === 0) {
-                toast.success("Enter your username", { style: { background: "#CBA6F7", color: "#1E1E2E" } })
+                toastSuccess("Enter your username")
             }
         }
     }, [currentUser, location.state?.roomId, setCurrentUser])

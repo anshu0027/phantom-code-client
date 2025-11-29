@@ -1,4 +1,7 @@
 import axiosInstance from "@/api/"
+import { ERROR_MESSAGES } from "@/constants/errors"
+import { isHttpErrorLike } from "@/types/error"
+import { logger } from "@/utils/logger"
 import { Language, RunContext as RunContextType } from "@/types/run"
 import langMap from "lang-map"
 import {
@@ -8,7 +11,7 @@ import {
     useEffect,
     useState,
 } from "react"
-import toast from "react-hot-toast"
+import { toastError, toastDismiss } from "@/utils/toast"
 import { useFileSystem } from "./FileContext"
 
 const RunCodeContext = createContext<RunContextType | null>(null)
@@ -40,9 +43,11 @@ const RunCodeContextProvider = ({ children }: { children: ReactNode }) => {
             try {
                 const languages = await axiosInstance.get("/runtimes")
                 setSupportedLanguages(languages.data)
-            } catch (error: any) {
-                toast.error("Failed to fetch supported languages")
-                if (error?.response?.data) console.error(error?.response?.data)
+            } catch (error: unknown) {
+                toastError(ERROR_MESSAGES.FETCH_LANGUAGES_FAILED)
+                if (isHttpErrorLike(error) && error.response?.data) {
+                    logger.error("Failed to fetch languages:", error.response.data)
+                }
             }
         }
 
@@ -68,11 +73,9 @@ const RunCodeContextProvider = ({ children }: { children: ReactNode }) => {
     const runCode = async () => {
         try {
             if (!selectedLanguage) {
-                return toast.error("Please select a language to run the code")
+                return toastError("Please select a language to run the code")
             } else if (!activeFile) {
-                return toast.error("Please open a file to run the code")
-            } else {
-                toast.loading("Running code...")
+                return toastError("Please open a file to run the code")
             }
 
             setIsRunning(true)
@@ -84,19 +87,20 @@ const RunCodeContextProvider = ({ children }: { children: ReactNode }) => {
                 files: [{ name: activeFile.name, content: activeFile.content }],
                 stdin: input,
             })
+
             if (response.data.run.stderr) {
                 setOutput(response.data.run.stderr)
             } else {
                 setOutput(response.data.run.stdout)
             }
+        } catch (error: unknown) {
+            if (isHttpErrorLike(error) && error.response?.data) {
+                logger.error("Failed to run code:", error.response.data)
+            }
+            toastError(ERROR_MESSAGES.RUN_CODE_FAILED)
+        } finally {
             setIsRunning(false)
-            toast.dismiss()
-        } catch (error: any) {
-            console.error(error.response.data)
-            console.error(error.response.data.error)
-            setIsRunning(false)
-            toast.dismiss()
-            toast.error("Failed to run the code")
+            toastDismiss()
         }
     }
 

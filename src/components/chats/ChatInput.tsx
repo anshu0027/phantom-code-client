@@ -9,6 +9,7 @@ import { SocketEvent } from "@/types/socket"
 import { formatDate } from "@/utils/formateDate"
 import { type FormEvent, useRef, useState } from "react"
 import { GoogleGenerativeAI } from "@google/generative-ai"
+import { logger } from "@/utils/logger"
 
 function ChatInput() {
     const { currentUser } = useAppContext()
@@ -63,7 +64,7 @@ function ChatInput() {
             // Broadcast AI response to all users
             socket.emit(SocketEvent.SEND_MESSAGE, { message: aiMessage })
         } catch (error) {
-            console.error("AI request failed:", error)
+            logger.error("AI request failed:", error)
 
             const errorMessage = error instanceof Error ? error.message : "Unknown error occurred"
             setError(errorMessage)
@@ -140,11 +141,13 @@ function ChatInput() {
                     placeholder={isProcessing ? "AI is processing..." : "Enter a message or type @ai to ask AI..."}
                     ref={inputRef}
                     disabled={isProcessing}
+                    aria-label="Chat message input"
                 />
                 <button
                     className="flex items-center justify-center rounded-md bg-accent1 p-2 text-background hover:bg-opacity-80 transition"
                     type="submit"
                     disabled={isProcessing}
+                    aria-label="Send message"
                 >
                     <RiSendPlaneLine size={24} color="#fff" />
                 </button>

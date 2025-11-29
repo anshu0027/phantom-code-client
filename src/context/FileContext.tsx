@@ -23,7 +23,7 @@ import {
     useEffect,
     useState,
 } from "react"
-import { toast } from "react-hot-toast"
+import { toastSuccess, toastDismiss } from "@/utils/toast"
 import { useAppContext } from "./AppContext"
 import { useSocket } from "./SocketContext"
 
@@ -51,6 +51,8 @@ function FileContextProvider({ children }: { children: ReactNode }) {
     const [activeFile, setActiveFile] = useState<FileSystemItem | null>(
         openFiles[0],
     )
+    const [isFileOperationLoading, setIsFileOperationLoading] =
+        useState<boolean>(false)
 
     // Function to toggle the isOpen property of a directory (Directory Open/Close)
     const toggleDirectory = (dirId: Id) => {
@@ -92,6 +94,7 @@ function FileContextProvider({ children }: { children: ReactNode }) {
             newDir: string | FileSystemItem,
             sendToSocket: boolean = true,
         ) => {
+            setIsFileOperationLoading(true)
             let newDirectory: FileSystemItem
             if (typeof newDir === "string") {
                 newDirectory = {
@@ -132,11 +135,15 @@ function FileContextProvider({ children }: { children: ReactNode }) {
                 addDirectoryToParent(prevFileStructure),
             )
 
-            if (!sendToSocket) return newDirectory.id
+            if (!sendToSocket) {
+                setTimeout(() => setIsFileOperationLoading(false), 300)
+                return newDirectory.id
+            }
             socket.emit(SocketEvent.DIRECTORY_CREATED, {
                 parentDirId,
                 newDirectory,
             })
+            setTimeout(() => setIsFileOperationLoading(false), 300)
 
             return newDirectory.id
         },
@@ -180,8 +187,8 @@ function FileContextProvider({ children }: { children: ReactNode }) {
             setActiveFile(null)
 
             if (dirId === fileStructure.id) {
-                toast.dismiss()
-                toast.success("Files and folders updated")
+                toastDismiss()
+                toastSuccess("Files and folders updated")
             }
 
             if (!sendToSocket) return
@@ -199,6 +206,7 @@ function FileContextProvider({ children }: { children: ReactNode }) {
             newDirName: string,
             sendToSocket: boolean = true,
         ): boolean => {
+            setIsFileOperationLoading(true)
             const renameInDirectory = (
                 directory: FileSystemItem,
             ): FileSystemItem | null => {
@@ -212,6 +220,7 @@ function FileContextProvider({ children }: { children: ReactNode }) {
                     )
 
                     if (isNameTaken) {
+                        setTimeout(() => setIsFileOperationLoading(false), 300)
                         return null // Name is already taken
                     }
 
@@ -247,11 +256,15 @@ function FileContextProvider({ children }: { children: ReactNode }) {
 
             setFileStructure(updatedFileStructure)
 
-            if (!sendToSocket) return true
+            if (!sendToSocket) {
+                setTimeout(() => setIsFileOperationLoading(false), 300)
+                return true
+            }
             socket.emit(SocketEvent.DIRECTORY_RENAMED, {
                 dirId,
                 newDirName,
             })
+            setTimeout(() => setIsFileOperationLoading(false), 300)
 
             return true
         },
@@ -260,6 +273,7 @@ function FileContextProvider({ children }: { children: ReactNode }) {
 
     const deleteDirectory = useCallback(
         (dirId: string, sendToSocket: boolean = true) => {
+            setIsFileOperationLoading(true)
             const deleteFromDirectory = (
                 directory: FileSystemItem,
             ): FileSystemItem | null => {
@@ -285,8 +299,12 @@ function FileContextProvider({ children }: { children: ReactNode }) {
                 (prevFileStructure) => deleteFromDirectory(prevFileStructure)!,
             )
 
-            if (!sendToSocket) return
+            if (!sendToSocket) {
+                setTimeout(() => setIsFileOperationLoading(false), 300)
+                return
+            }
             socket.emit(SocketEvent.DIRECTORY_DELETED, { dirId })
+            setTimeout(() => setIsFileOperationLoading(false), 300)
         },
         [socket],
     )
@@ -350,6 +368,7 @@ function FileContextProvider({ children }: { children: ReactNode }) {
             file: FileName | FileSystemItem,
             sendToSocket: boolean = true,
         ): Id => {
+            setIsFileOperationLoading(true)
             // Check if file with same name already exists
             let num = 1
 
@@ -412,11 +431,15 @@ function FileContextProvider({ children }: { children: ReactNode }) {
             // Set the new file as active file
             setActiveFile(newFile)
 
-            if (!sendToSocket) return newFile.id
+            if (!sendToSocket) {
+                setTimeout(() => setIsFileOperationLoading(false), 300)
+                return newFile.id
+            }
             socket.emit(SocketEvent.FILE_CREATED, {
                 parentDirId,
                 newFile,
             })
+            setTimeout(() => setIsFileOperationLoading(false), 300)
 
             return newFile.id
         },
@@ -475,6 +498,7 @@ function FileContextProvider({ children }: { children: ReactNode }) {
             newName: string,
             sendToSocket: boolean = true,
         ): boolean => {
+            setIsFileOperationLoading(true)
             const renameInDirectory = (
                 directory: FileSystemItem,
             ): FileSystemItem => {
@@ -529,11 +553,15 @@ function FileContextProvider({ children }: { children: ReactNode }) {
                 })
             }
 
-            if (!sendToSocket) return true
+            if (!sendToSocket) {
+                setTimeout(() => setIsFileOperationLoading(false), 300)
+                return true
+            }
             socket.emit(SocketEvent.FILE_RENAMED, {
                 fileId,
                 newName,
             })
+            setTimeout(() => setIsFileOperationLoading(false), 300)
 
             return true
         },
@@ -542,6 +570,7 @@ function FileContextProvider({ children }: { children: ReactNode }) {
 
     const deleteFile = useCallback(
         (fileId: string, sendToSocket: boolean = true) => {
+            setIsFileOperationLoading(true)
             // Recursive function to find and delete the file in nested directories
             const deleteFileFromDirectory = (
                 directory: FileSystemItem,
@@ -589,10 +618,14 @@ function FileContextProvider({ children }: { children: ReactNode }) {
                 setActiveFile(null)
             }
 
-            toast.success("File deleted successfully")
+            toastSuccess("File deleted successfully")
 
-            if (!sendToSocket) return
+            if (!sendToSocket) {
+                setTimeout(() => setIsFileOperationLoading(false), 300)
+                return
+            }
             socket.emit(SocketEvent.FILE_DELETED, { fileId })
+            setTimeout(() => setIsFileOperationLoading(false), 300)
         },
         [activeFile?.id, openFiles, socket],
     )
@@ -631,7 +664,7 @@ function FileContextProvider({ children }: { children: ReactNode }) {
 
     const handleUserJoined = useCallback(
         ({ user }: { user: RemoteUser }) => {
-            toast.success(`${user.username} joined the room`)
+            toastSuccess(`${user.username} joined the room`)
 
             // Send the code and drawing data to the server
             socket.emit(SocketEvent.SYNC_FILE_STRUCTURE, {
@@ -664,7 +697,7 @@ function FileContextProvider({ children }: { children: ReactNode }) {
             setFileStructure(fileStructure)
             setOpenFiles(openFiles)
             setActiveFile(activeFile)
-            toast.dismiss()
+            toastDismiss()
         },
         [],
     )
@@ -784,6 +817,7 @@ function FileContextProvider({ children }: { children: ReactNode }) {
                 fileStructure,
                 openFiles,
                 activeFile,
+                isFileOperationLoading,
                 setActiveFile,
                 closeFile,
                 toggleDirectory,

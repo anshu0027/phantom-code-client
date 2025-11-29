@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import { logger } from "@/utils/logger"
 
 function useFullScreen() {
     function detectMob() {
@@ -24,7 +25,7 @@ function useFullScreen() {
         // Use native Fullscreen API
         if (document.documentElement.requestFullscreen) {
             document.documentElement.requestFullscreen().catch((err) => {
-                console.error("Error attempting to enable fullscreen:", err)
+                logger.error("Error attempting to enable fullscreen:", err)
             })
         }
     }, [isMobile])

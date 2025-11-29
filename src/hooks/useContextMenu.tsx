@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 export const useContextMenu = ({
     ref,
 }: {
-    ref: React.RefObject<HTMLDivElement>
+    ref: React.RefObject<HTMLDivElement | null>
 }) => {
     const [menuOpen, setMenuOpen] = useState(false)
     const [coords, setCoords] = useState({

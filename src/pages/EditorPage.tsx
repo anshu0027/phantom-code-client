@@ -2,6 +2,7 @@ import SplitterComponent from "@/components/SplitterComponent"
 import ConnectionStatusPage from "@/components/connection/ConnectionStatusPage"
 import Sidebar from "@/components/sidebar/Sidebar"
 import WorkSpace from "@/components/workspace"
+import ErrorBoundary from "@/components/common/ErrorBoundary"
 import { useAppContext } from "@/context/AppContext"
 import { useSocket } from "@/context/SocketContext"
 import useFullScreen from "@/hooks/useFullScreen"
@@ -48,10 +49,12 @@ function EditorPage() {
     }
 
     return (
-        <SplitterComponent>
-            <Sidebar />
-            <WorkSpace/>
-        </SplitterComponent>
+        <ErrorBoundary>
+            <SplitterComponent>
+                <Sidebar />
+                <WorkSpace />
+            </SplitterComponent>
+        </ErrorBoundary>
     )
 }
 

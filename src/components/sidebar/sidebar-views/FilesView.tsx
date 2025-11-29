@@ -6,7 +6,9 @@ import { FileSystemItem } from "@/types/file"
 import cn from "classnames"
 import { BiArchiveIn } from "react-icons/bi"
 import { TbFileUpload } from "react-icons/tb"
-import { toast } from "react-hot-toast"
+import { toastError, toastLoading, toastDismiss, toastSuccess } from "@/utils/toast"
+import { logger } from "@/utils/logger"
+import LoadingSpinner from "@/components/common/LoadingSpinner"
 
 function FilesView() {
     const { downloadFilesAndFolders, updateDirectory } = useFileSystem()
@@ -44,10 +46,10 @@ function FilesView() {
             }
 
             // Notify if neither API is supported
-            toast.error("Your browser does not support directory selection.")
+            toastError("Your browser does not support directory selection.")
         } catch (error) {
-            console.error("Error opening directory:", error)
-            toast.error("Failed to open directory")
+            logger.error("Error opening directory:", error)
+            toastError("Failed to open directory")
         } finally {
             setIsLoading(false)
         }
@@ -57,14 +59,14 @@ function FilesView() {
         directoryHandle: FileSystemDirectoryHandle
     ) => {
         try {
-            toast.loading("Getting files and folders...")
+            toastLoading("Getting files and folders...")
             const structure = await readDirectory(directoryHandle)
             updateDirectory("", structure)
-            toast.dismiss()
-            toast.success("Directory loaded successfully")
+            toastDismiss()
+            toastSuccess("Directory loaded successfully")
         } catch (error) {
-            console.error("Error processing directory:", error)
-            toast.error("Failed to process directory")
+            logger.error("Error processing directory:", error)
+            toastError("Failed to process directory")
         }
     }
 
@@ -167,7 +169,7 @@ function FilesView() {
         try {
             return await file.text()
         } catch (error) {
-            console.error(`Error reading file ${file.name}:`, error)
+            logger.error(`Error reading file ${file.name}:`, error)
             return `Error reading file: ${file.name}`
         }
     }
@@ -185,16 +187,22 @@ function FilesView() {
             >
                 <hr />
                 <button
-                    className="mt-2 flex w-full justify-start rounded-md p-2 transition-all hover:bg-[#CBA6F7] hover:text-gray-800"
+                    className="mt-2 flex w-full items-center justify-start gap-2 rounded-md p-2 transition-all hover:bg-[#CBA6F7] hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={handleOpenDirectory}
                     disabled={isLoading}
+                    aria-label="Open File or Folder"
                 >
-                    <TbFileUpload className="mr-2" size={24} />
+                    {isLoading ? (
+                        <LoadingSpinner size="small" />
+                    ) : (
+                        <TbFileUpload size={24} />
+                    )}
                     {isLoading ? "Loading..." : "Open File/Folder"}
                 </button>
                 <button
                     className="flex w-full justify-start rounded-md p-2 transition-all hover:bg-[#CBA6F7] hover:text-gray-800"
                     onClick={downloadFilesAndFolders}
+                    aria-label="Download code as ZIP file"
                 >
                     <BiArchiveIn className="mr-2" size={22} /> Download Code
                 </button>

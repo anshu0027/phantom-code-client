@@ -1,6 +1,10 @@
 import { useFileSystem } from "@/context/FileContext"
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react"
-import toast from "react-hot-toast"
+import { toastError } from "@/utils/toast"
+import {
+    validateFileName,
+    validateDirectoryName,
+} from "@/utils/validation"
 
 interface RenameViewProps {
     id: string
@@ -20,29 +24,36 @@ function RenameView({ id, preName, setEditing, type }: RenameViewProps) {
 
         const capitalizedType = type.charAt(0).toUpperCase() + type.slice(1)
 
-        if (name === "") {
-            toast.error(`${capitalizedType} name cannot be empty`, { style: { background: "#1E1E2E", color: "#F38BA8" } })
-        } else if (name.length > 25) {
-            toast.error(
-                `${capitalizedType} name cannot be longer than 25 characters`,
-                { style: { background: "#1E1E2E", color: "#F38BA8" } }
-            )
-        } else if (name === preName) {
-            toast.error(`${capitalizedType} name cannot be the same as before`, { style: { background: "#1E1E2E", color: "#F38BA8" } })
-        } else {
-            const isRenamed =
-                type === "directory"
-                    ? renameDirectory(id, name)
-                    : renameFile(id, name)
+        // Check if name is the same as before
+        if (name === preName) {
+            toastError(`${capitalizedType} name cannot be the same as before`)
+            return
+        }
 
-            if (isRenamed && type === "file") {
-                openFile(id)
-            }
-            if (!isRenamed) {
-                toast.error(`${capitalizedType} with same name already exists`, { style: { background: "#1E1E2E", color: "#F38BA8" } })
-            } else {
-                setEditing(false)
-            }
+        // Validate using validation utility
+        const validationResult =
+            type === "directory"
+                ? validateDirectoryName(name)
+                : validateFileName(name)
+
+        if (!validationResult.valid) {
+            toastError(validationResult.error || "Invalid name")
+            return
+        }
+
+        // Attempt to rename
+        const isRenamed =
+            type === "directory"
+                ? renameDirectory(id, name)
+                : renameFile(id, name)
+
+        if (isRenamed && type === "file") {
+            openFile(id)
+        }
+        if (!isRenamed) {
+            toastError(`${capitalizedType} with same name already exists`)
+        } else {
+            setEditing(false)
         }
     }
 

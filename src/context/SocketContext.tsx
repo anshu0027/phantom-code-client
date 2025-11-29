@@ -4,6 +4,9 @@ import {
     SocketEvent,
     SocketId,
 } from "@/types/socket"
+import { ERROR_MESSAGES } from "@/constants/errors"
+import type { SocketError } from "@/types/error"
+import { logger } from "@/utils/logger"
 import { RemoteUser, USER_STATUS, User } from "@/types/user"
 import {
     ReactNode,
@@ -13,7 +16,7 @@ import {
     useEffect,
     useMemo,
 } from "react"
-import { toast } from "react-hot-toast"
+import { toastError, toastLoading, toastDismiss, toastSuccess } from "@/utils/toast"
 import { Socket, io } from "socket.io-client"
 import { useAppContext } from "./AppContext"
 
@@ -47,20 +50,33 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
     )
 
     const handleError = useCallback(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (err: any) => {
-            console.log("socket error", err)
+        (err: unknown) => {
+            let message: string = ERROR_MESSAGES.SOCKET_CONNECTION_FAILED
+
+            if (
+                err &&
+                typeof err === "object" &&
+                "message" in err &&
+                typeof (err as { message?: unknown }).message === "string"
+            ) {
+                message = (err as { message: string }).message
+            }
+
+            const socketError: SocketError = { message, type: "connection" }
+
+            logger.error("socket error", socketError, err)
+
             setStatus(USER_STATUS.CONNECTION_FAILED)
-            toast.dismiss()
-            toast.error("Failed to connect to the server")
+            toastDismiss()
+            toastError(ERROR_MESSAGES.SOCKET_CONNECTION_FAILED)
         },
         [setStatus],
     )
 
     const handleUsernameExist = useCallback(() => {
-        toast.dismiss()
+        toastDismiss()
         setStatus(USER_STATUS.INITIAL)
-        toast.error(
+        toastError(
             "The username you chose already exists in the room. Please choose a different username.",
         )
     }, [setStatus])
@@ -69,11 +85,11 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
         ({ user, users }: { user: User; users: RemoteUser[] }) => {
             setCurrentUser(user)
             setUsers(users)
-            toast.dismiss()
+            toastDismiss()
             setStatus(USER_STATUS.JOINED)
 
             if (users.length > 1) {
-                toast.loading("Syncing data, please wait...")
+                toastLoading("Syncing data, please wait...")
             }
         },
         [setCurrentUser, setStatus, setUsers],
@@ -81,7 +97,7 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
 
     const handleUserLeft = useCallback(
         ({ user }: { user: User }) => {
-            toast.success(`${user.username} left the room`)
+            toastSuccess(`${user.username} left the room`)
             setUsers(users.filter((u: User) => u.username !== user.username))
         },
         [setUsers, users],
